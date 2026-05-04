@@ -103,6 +103,8 @@ export default function ChartCard({
     }));
   }, [seriesByRange, activeRange]);
 
+  const hasData = chartData.length > 0;
+
   const yDomain = useMemo(() => {
     if (!chartData.length) return [0, 100];
     const values = chartData.map((item) => item.value);
@@ -185,61 +187,67 @@ export default function ChartCard({
           ) : null}
         </AnimatePresence>
 
-        <ResponsiveContainer width='100%' height='100%'>
-          <LineChart
-            data={chartData}
-            margin={{ top: 8, right: isCompact ? 6 : 14, left: isCompact ? 6 : 10, bottom: 0 }}
-            onClick={handleChartClick}
-          >
-            <defs>
-              <linearGradient id='chartLineGradient' x1='0' y1='0' x2='1' y2='0'>
-                <stop offset='0%' stopColor='#000000' stopOpacity={0.4} />
-                <stop offset='100%' stopColor='#000000' stopOpacity={1} />
-              </linearGradient>
-            </defs>
+        {!hasData ? (
+          <div className='flex h-full w-full items-center justify-center text-sm sm:text-base text-[rgba(25,37,20,0.7)]'>
+            No data available for this period
+          </div>
+        ) : (
+          <ResponsiveContainer width='100%' height='100%'>
+            <LineChart
+              data={chartData}
+              margin={{ top: 8, right: isCompact ? 6 : 14, left: isCompact ? 6 : 10, bottom: 0 }}
+              onClick={handleChartClick}
+            >
+              <defs>
+                <linearGradient id='chartLineGradient' x1='0' y1='0' x2='1' y2='0'>
+                  <stop offset='0%' stopColor='#000000' stopOpacity={0.4} />
+                  <stop offset='100%' stopColor='#000000' stopOpacity={1} />
+                </linearGradient>
+              </defs>
 
-            <XAxis
-              dataKey='label'
-              tickLine={false}
-              axisLine={false}
-              interval={0}
-              padding={{ left: isCompact ? 8 : 16, right: isCompact ? 10 : 20 }}
-              tick={{ fill: 'rgba(25,37,20,0.7)', fontSize: isCompact ? 12 : 14 }}
-              dy={isCompact ? 10 : 12}
-            />
-            <YAxis
-              tickLine={false}
-              axisLine={false}
-              tick={{ fill: 'rgba(25,37,20,0.45)', fontSize: isCompact ? 10 : 12 }}
-              tickFormatter={(value) => `${Math.round(value)}`}
-              width={yAxisWidth}
-              domain={yDomain}
-              ticks={yTicks}
-            />
-            <Tooltip
-              cursor={false}
-              formatter={(value) => [`${value}${selectedSensor?.unit || ''}`, t('dashboard.chart.value')]}
-              labelFormatter={(label) => `${label}`}
-              contentStyle={{
-                border: '1px solid rgba(25,37,20,0.15)',
-                borderRadius: '8px',
-                backgroundColor: '#F8FFF6',
-                color: '#192514',
-                fontFamily: 'NewBlack',
-                fontSize: '12px',
-                padding: '6px 8px',
-              }}
-            />
-            <Line
-              type='monotone'
-              dataKey='value'
-              stroke='url(#chartLineGradient)'
-              strokeWidth={isCompact ? 2.5 : 3}
-              dot={false}
-              activeDot={{ r: isCompact ? 4 : 5, fill: '#192514', stroke: 'none' }}
-            />
-          </LineChart>
-        </ResponsiveContainer>
+              <XAxis
+                dataKey='label'
+                tickLine={false}
+                axisLine={false}
+                interval={0}
+                padding={{ left: isCompact ? 8 : 16, right: isCompact ? 10 : 20 }}
+                tick={{ fill: 'rgba(25,37,20,0.7)', fontSize: isCompact ? 12 : 14 }}
+                dy={isCompact ? 10 : 12}
+              />
+              <YAxis
+                tickLine={false}
+                axisLine={false}
+                tick={{ fill: 'rgba(25,37,20,0.45)', fontSize: isCompact ? 10 : 12 }}
+                tickFormatter={(value) => `${Math.round(value)}`}
+                width={yAxisWidth}
+                domain={yDomain}
+                ticks={yTicks}
+              />
+              <Tooltip
+                cursor={false}
+                formatter={(value) => [`${value}${selectedSensor?.unit || ''}`, t('dashboard.chart.value')]}
+                labelFormatter={(label) => `${label}`}
+                contentStyle={{
+                  border: '1px solid rgba(25,37,20,0.15)',
+                  borderRadius: '8px',
+                  backgroundColor: '#F8FFF6',
+                  color: '#192514',
+                  fontFamily: 'NewBlack',
+                  fontSize: '12px',
+                  padding: '6px 8px',
+                }}
+              />
+              <Line
+                type='monotone'
+                dataKey='value'
+                stroke='url(#chartLineGradient)'
+                strokeWidth={isCompact ? 2.5 : 3}
+                dot={false}
+                activeDot={{ r: isCompact ? 4 : 5, fill: '#192514', stroke: 'none' }}
+              />
+            </LineChart>
+          </ResponsiveContainer>
+        )}
       </div>
     </motion.div>
   );

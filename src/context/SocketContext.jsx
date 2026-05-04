@@ -8,7 +8,7 @@ export function SocketProvider({ children }) {
   const socketRef = useRef(null);
   const [socket, setSocket] = useState(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [liveState, setLiveState] = useState(null); // initial state from auth_success
+  const [liveState, setLiveState] = useState(null);
 
   useEffect(() => {
     let instance = null;
@@ -23,13 +23,14 @@ export function SocketProvider({ children }) {
 
       instance.on('connect', () => {
         console.log('[Socket] Connected — authenticating...');
+        console.log('[Socket] Sending token:', session.access_token?.slice(0, 20) + '...');
         instance.emit('authenticate', { token: session.access_token });
       });
 
       instance.on('auth_success', ({ ha_instance_id, initialState }) => {
-        console.log(`[Socket] Authenticated — room: ${ha_instance_id}`);
+        console.log('[Socket] auth_success fired! ha_instance_id:', ha_instance_id);
+        console.log('[Socket] initialState:', initialState);
         setIsAuthenticated(true);
-        // Seed useLiveState with the full initial state from HA
         if (initialState) setLiveState(initialState);
       });
 

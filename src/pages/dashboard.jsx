@@ -11,7 +11,6 @@ import {
   DASHBOARD_SENSOR_SERIES,
   DEFAULT_SELECTED_SENSOR_ID,
 } from '../utilities/data/dashboardData';
-import { useTranslation } from 'react-i18next';
 import { NORMALIZED_USER, profileSettingOptions } from '../utilities/data/profileSettings';
 import { STORAGE_KEYS } from '../utilities/data/storageKeys';
 import MonitoringAlerts from '../utilities/components/dashboard/MonitoringAlerts';
@@ -22,9 +21,8 @@ import {
 import useFarmPreferences from '../hooks/useFarmPreferences';
 import useActuatorsState from '../hooks/useActuatorsState';
 import usePersistentState from '../hooks/usePersistentState';
-import useLiveState,{ID_TO_ACTUATOR_TYPE,ACTUATOR_TYPE_TO_ID} from '../hooks/useLiveState';
+import useLiveState, { ID_TO_ACTUATOR_TYPE, ACTUATOR_TYPE_TO_ID } from '../hooks/useLiveState';
 import { useSocket } from '../context/SocketContext';
-
 
 export default function Dashboard() {
 
@@ -48,43 +46,59 @@ export default function Dashboard() {
 
   const [actuators, setActuators] = useActuatorsState();
 
-  // ── Live socket state ────────────────────────────────────────────────────
   const { socket } = useSocket();
   const {
-  liveSensors,
-  liveActuators,
-  liveCrop,
-  liveRecommendation,
-  liveWarnings
-} = useLiveState(DASHBOARD_SENSOR_OPTIONS);
+    liveSensors,
+    liveActuators,
+    liveCrop,
+    liveRecommendation,
+    liveWarnings,
+  } = useLiveState(DASHBOARD_SENSOR_OPTIONS); // ← fixed: pass argument
 
-  console.log('🔍 liveWarnings from backend:', liveWarnings);
-  // Merge live actuators into local state when backend pushes an update
+  // Merge live actuators into local state
   useEffect(() => {
-  if (!liveActuators) return;
-  setActuators((prev) =>
-    prev.map((actuator) => {
-      // match backend type → frontend id
-      const live = liveActuators.find(
-        (a) => ACTUATOR_TYPE_TO_ID[a.type] === actuator.id
-      );
-      if (!live) return actuator;
-      return {
-        ...actuator,
-        status: live.status          ?? actuator.status,
-        mode:   live.control_mode === 'semi_auto' ? 'semi-auto' : 'auto',
-        raw: {
-          ...actuator.raw,
-          run_at:           live.run_at,
-          run_until:        live.run_until,
-          duration_minutes: live.duration_minutes,
-        },
-      };
-    })
-  );
-}, [liveActuators]);
+    if (!liveActuators) return;
 
-  // Merge live crop into farm preferences when backend pushes an update
+    const normalizedLive = Array.isArray(liveActuators) ? liveActuators : [liveActuators];
+    if (normalizedLive.length === 0) return;
+
+    setActuators((prev) =>
+      prev.map((actuator) => {
+        const expectedBackendType = ID_TO_ACTUATOR_TYPE[actuator.id] || actuator.id;
+        const live = normalizedLive.find((a) => a?.type === expectedBackendType);
+        if (!live) return actuator;
+
+        const runAt = live.run_at ?? null;
+        const runUntil = live.run_until ?? null;
+
+        let updatedSchedule = '';
+        if (live.control_mode === 'auto') {
+          if (runAt && runUntil) {
+            updatedSchedule = `${runAt.slice(11, 16)} - ${runUntil.slice(11, 16)}`;
+          } else if (runUntil) {
+            updatedSchedule = `Exec at ${runAt.slice(11, 16)}`;
+          } else {
+            updatedSchedule = 'Not Scheduled';
+          }
+        } else {
+          updatedSchedule = 'Manual';
+        }
+
+        return {
+          ...actuator,
+          status: live.status ?? actuator.status,
+          mode: live.control_mode === 'semi_auto' ? 'semi-auto' : live.control_mode === 'auto' ? 'auto' : actuator.mode,
+          schedule: updatedSchedule,
+          run_at: runAt,
+          run_until: runUntil,
+          duration_minutes: live.duration_minutes ?? null,
+          raw: { ...actuator.raw, ...live },
+        };
+      })
+    );
+  }, [liveActuators]);
+
+  // Merge live crop into farm preferences
   useEffect(() => {
     if (!liveCrop) return;
     if (liveCrop.type)         setCrop(liveCrop.type);
@@ -102,24 +116,22 @@ export default function Dashboard() {
   useEffect(() => {
     const exists = DASHBOARD_SENSOR_OPTIONS.some((sensor) => sensor.id === selectedSensorId);
     if (!exists) setSelectedSensorId(DEFAULT_SELECTED_SENSOR_ID);
-  }, [selectedSensorId, setSelectedSensorId]);
+  }, [selectedSensorId]);
 
   const displayUnits = useMemo(
     () => ({
-      temperatureUnit:  temperatureUnit  ?? NORMALIZED_USER.displayUnits.temp,
-      humidityUnit:     humidityUnit     ?? NORMALIZED_USER.displayUnits.hum,
-      soilMoistureUnit: soilMoistureUnit ?? NORMALIZED_USER.displayUnits.soil,
+      temperatureUnit:    temperatureUnit    ?? NORMALIZED_USER.displayUnits.temp,
+      humidityUnit:       humidityUnit       ?? NORMALIZED_USER.displayUnits.hum,
+      soilMoistureUnit:   soilMoistureUnit   ?? NORMALIZED_USER.displayUnits.soil,
       lightIntensityUnit: lightIntensityUnit ?? NORMALIZED_USER.displayUnits.light,
     }),
     [temperatureUnit, humidityUnit, soilMoistureUnit, lightIntensityUnit]
   );
 
-  // Use live sensor value if available, otherwise fall back to dummy
   const baseTemperature = Number(
     (liveSensors ?? DASHBOARD_SENSOR_OPTIONS).find((s) => s.id === 'temperature')?.currentValue ?? 25
   );
 
-  // Prefer live sensors over dummy data; apply unit conversion either way
   const convertedSensors = useMemo(
     () => (liveSensors ?? DASHBOARD_SENSOR_OPTIONS).map((sensor) => {
       const converted = convertSensorValueById(sensor.id, sensor.currentValue, displayUnits, baseTemperature);
@@ -166,57 +178,55 @@ export default function Dashboard() {
   }, [actuators]);
 
   const handleToggleActuatorStatus = (actuatorId) => {
-  setActuators((prev) =>
-    prev.map((actuator) => {
-      if (actuator.id !== actuatorId) return actuator;
-      if (actuator.mode !== 'semi-auto') return actuator;
-      const nextStatus = actuator.status === 'on' ? 'off' : 'on';
-      socket?.emit('set_entity', {
-        type: 'actuator_status',
-        payload: {
-          actuatorType: ID_TO_ACTUATOR_TYPE[actuatorId] ?? actuatorId,
-          value: nextStatus,
-        },
-      });
-      return { ...actuator, status: nextStatus };
-    })
-  );
-};
+    setActuators((prev) =>
+      prev.map((actuator) => {
+        if (actuator.id !== actuatorId) return actuator;
+        if (actuator.mode !== 'semi-auto') return actuator;
+        const nextStatus = actuator.status === 'on' ? 'off' : 'on';
+        socket?.emit('set_entity', {
+          type: 'actuator_status',
+          payload: {
+            actuatorType: ID_TO_ACTUATOR_TYPE[actuatorId] ?? actuatorId,
+            value: nextStatus,
+          },
+        });
+        return { ...actuator, status: nextStatus };
+      })
+    );
+  };
 
   const handleToggleGlobalMode = (nextSemiAutoState) => {
-  setActuators((prev) =>
-    prev.map((actuator) => {
-      const nextMode = nextSemiAutoState ? 'semi-auto' : 'auto';
-      socket?.emit('set_entity', {
-        type: 'actuator_control_mode',
-        payload: {
-          actuatorType: ID_TO_ACTUATOR_TYPE[actuator.id] ?? actuator.id,
-          value: nextSemiAutoState ? 'semi_auto' : 'auto',
-        },
-      });
-      return { ...actuator, mode: nextMode };
-    })
-  );
-};
+    setActuators((prev) =>
+      prev.map((actuator) => {
+        const nextMode = nextSemiAutoState ? 'semi-auto' : 'auto';
+        socket?.emit('set_entity', {
+          type: 'actuator_control_mode',
+          payload: {
+            actuatorType: ID_TO_ACTUATOR_TYPE[actuator.id] ?? actuator.id,
+            value: nextSemiAutoState ? 'semi_auto' : 'auto',
+          },
+        });
+        return { ...actuator, mode: nextMode };
+      })
+    );
+  };
 
   const handleToggleActuatorMode = (actuatorId) => {
-  setActuators((prev) =>
-    prev.map((actuator) => {
-      if (actuator.id !== actuatorId) return actuator;
-      const nextMode = actuator.mode === 'semi-auto' ? 'auto' : 'semi-auto';
-      socket?.emit('set_entity', {
-        type: 'actuator_control_mode',
-        payload: {
-          actuatorType: ID_TO_ACTUATOR_TYPE[actuatorId] ?? actuatorId,
-          value: nextMode === 'semi-auto' ? 'semi_auto' : 'auto',
-        },
-      });
-      return { ...actuator, mode: nextMode };
-    })
-  );
-};
-
-  // ── Sections ─────────────────────────────────────────────────────────────
+    setActuators((prev) =>
+      prev.map((actuator) => {
+        if (actuator.id !== actuatorId) return actuator;
+        const nextMode = actuator.mode === 'semi-auto' ? 'auto' : 'semi-auto';
+        socket?.emit('set_entity', {
+          type: 'actuator_control_mode',
+          payload: {
+            actuatorType: ID_TO_ACTUATOR_TYPE[actuatorId] ?? actuatorId,
+            value: nextMode === 'semi-auto' ? 'semi_auto' : 'auto',
+          },
+        });
+        return { ...actuator, mode: nextMode };
+      })
+    );
+  };
 
   const chartSection = (
     <motion.div
@@ -323,7 +333,6 @@ export default function Dashboard() {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.35, ease: 'easeOut' }}
     >
-      {/* Live indicator */}
       {socket?.connected && (
         <div className="flex items-center gap-1.5 self-end px-1">
           <span className="w-2 h-2 rounded-full bg-[#55BB33] animate-pulse" />

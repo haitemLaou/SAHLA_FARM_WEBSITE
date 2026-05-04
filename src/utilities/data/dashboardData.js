@@ -530,25 +530,27 @@ export const DASHBOARD_SENSOR_SERIES = Object.fromEntries(
 export const DEFAULT_SELECTED_SENSOR_ID = DASHBOARD_SENSOR_OPTIONS[0]?.id || 'temperature';
 
 // Normalizes backend actuator naming/mode/schedule for carousel + control cards.
-export const DASHBOARD_ACTUATORS = (FARM_INFO.actuators || []).map((actuator, index) => {
-  const normalizedMode = actuator.control_mode === 'semi_auto' ? 'semi-auto' : 'auto';
-  const name = actuator.type ? actuator.type.charAt(0).toUpperCase() + actuator.type.slice(1) : `Actuator ${index + 1}`;
+export const DASHBOARD_ACTUATORS = (FARM_INFO.actuators || []).map(
+  (actuator, index) => {
+    const normalizedMode =
+      actuator.control_mode === "semi_auto" ? "semi-auto" : "auto";
+    const name = actuator.type
+      ? actuator.type.charAt(0).toUpperCase() + actuator.type.slice(1)
+      : `Actuator ${index + 1}`;
 
-  const schedule = actuator.run_at && actuator.run_until
-    ? `${actuator.run_at.slice(11, 16)} - ${actuator.run_until.slice(11, 16)}`
-    : actuator.run_at
-      ? `Exec at ${actuator.run_at.slice(11, 16)}`
-      : 'No schedule';
+    // ── Don't compute schedule from dummy data — it will be set by live socket ──
+    const schedule = normalizedMode === "auto" ? "Not Scheduled" : "";
 
-  return {
-    id: actuator.id || `${actuator.type || 'actuator'}-${index}`,
-    name,
-    status: actuator.status || 'off',
-    mode: normalizedMode,
-    schedule,
-    raw: actuator,
-  };
-});
+    return {
+      id: actuator.id || `${actuator.type || "actuator"}-${index}`,
+      name,
+      status: actuator.status || "off",
+      mode: normalizedMode,
+      schedule, // ← no longer computed from dummy run_at/run_until
+      raw: actuator,
+    };
+  },
+);
 
 // Raw warnings are exposed for alert rendering and AI context filtering.
 export const DASHBOARD_WARNINGS = FARM_INFO.warnings || [];

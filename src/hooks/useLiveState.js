@@ -29,9 +29,14 @@ export default function useLiveState(initialSensorOptions) {
   const [liveWeather, setLiveWeather] = useState(null);
   const [liveNotifications, setLiveNotifications] = useState(null);
 
-  // ── Seed all state from initial HA snapshot on connect ──────────────────
+  // Seed all state from the initial HA snapshot (received via auth_success)
   useEffect(() => {
-    if (!liveState) return;
+    if (!liveState) {
+      console.log("[useLiveState] liveState is null");
+      return;
+    };
+    console.log("[useLiveState] liveState received:", liveState);
+    console.log("[useLiveState] liveState.actuators:", liveState?.actuators);
 
     if (liveState.recommendation)
       setLiveRecommendation(liveState.recommendation);
@@ -58,7 +63,7 @@ export default function useLiveState(initialSensorOptions) {
     }
   }, [liveState, initialSensorOptions]);
 
-  // ── Live socket event listeners ──────────────────────────────────────────
+  // Live socket updates
   useEffect(() => {
     if (!socket) return;
 
@@ -78,7 +83,10 @@ export default function useLiveState(initialSensorOptions) {
       });
     };
 
-    const onActuator = ({ value }) => setLiveActuators(value);
+    const onActuator = ({ value }) => {
+      console.log("[useLiveState] actuator_changed event received:", value);
+      setLiveActuators(value);
+    };
     const onCrop = ({ value }) => setLiveCrop(value);
     const onWarning = ({ value }) => setLiveWarnings(value);
     const onRecommendation = ({ value }) => setLiveRecommendation(value);
@@ -103,7 +111,15 @@ export default function useLiveState(initialSensorOptions) {
       socket.off("notifications_changed", onNotifications);
     };
   }, [socket, initialSensorOptions]);
-
+  console.log("[useLiveState] Returning live state:", {
+    liveSensors,
+    liveActuators,
+    liveCrop,
+    liveWarnings,
+    liveRecommendation,
+    liveWeather,
+    liveNotifications,
+  });
   return {
     liveSensors,
     liveActuators,

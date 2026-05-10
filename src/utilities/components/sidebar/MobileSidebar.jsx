@@ -16,7 +16,7 @@ export default function MobileSidebar({profileInfo, isOpen, setIsOpen, LogOutIco
   const isAr = i18n.language === 'ar';
   const navigate = useNavigate();
   const navItems = [
-  { name: t('sidebar.home'),          path: "/",              icon: HomeIcon         },
+  { name: t('sidebar.home'),          path: "/dashboard",              icon: HomeIcon         },
   { name: t('sidebar.chat'),       path: "/chat",          icon: ChatIcon         },
   { name: t('sidebar.camera'),        path: "/stream",        icon: CameraIcon       },
   { name: t('sidebar.history'),       path: "/history",       icon: HistoryIcon      },

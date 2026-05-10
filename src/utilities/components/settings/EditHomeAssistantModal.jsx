@@ -134,7 +134,7 @@ export default function EditHomeAssistantModal({
         {status && (
           <div className={`mt-3 flex items-center gap-2 text-sm font-semibold ${status === 'online' ? 'text-[#2E6900]' : 'text-red-500'}`}>
             <span className={`w-2 h-2 rounded-full ${status === 'online' ? 'bg-[#2E6900]' : 'bg-red-500'}`} />
-            {status === 'online' ? 'Connected' : 'Offline'}
+            {status === 'online' ? t('profile.connected') : t('profile.offline')}
           </div>
         )}
 
@@ -155,7 +155,7 @@ export default function EditHomeAssistantModal({
             onClick={handleSave}
             disabled={loading}
           >
-            {loading ? 'Connecting...' : t('profile.editHaModal.save')}
+            {loading ? t('profile.editHaModal.connecting') : t('profile.editHaModal.save')}
           </button>
         </div>
       </div>

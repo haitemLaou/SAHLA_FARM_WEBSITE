@@ -19,7 +19,7 @@ export default function DesktopSidebar({ profileInfo, LogOutIcon , NotificationI
   const { t, i18n } = useTranslation();
   const isAr = i18n.language === 'ar';
   const navItems = [
-  { name: t('sidebar.home'),          path: "/",              icon: HomeIcon         },
+  { name: t('sidebar.home'),          path: "/dashboard",              icon: HomeIcon         },
   { name: t('sidebar.chat'),       path: "/chat",          icon: ChatIcon         },
   { name: t('sidebar.camera'),        path: "/stream",        icon: CameraIcon       },
   { name: t('sidebar.history'),       path: "/history",       icon: HistoryIcon      },

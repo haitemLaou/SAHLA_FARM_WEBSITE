@@ -95,7 +95,16 @@ export default function ChartCard({
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
-
+  const translateLabel = (label) => {
+    if (!label) return '';
+    const lowerLabel = String(label).toLowerCase();
+    const days = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
+    
+    if (days.includes(lowerLabel)) {
+      return t(`history.day.${lowerLabel}`);
+    }
+    return label; 
+  };
   const chartData = useMemo(() => {
     // 1. Treat seriesByRange directly as the array of data points
     const series = Array.isArray(seriesByRange) ? seriesByRange : [];
@@ -115,7 +124,7 @@ export default function ChartCard({
       }
 
       return {
-        label: displayLabel || 'Unknown',
+        label: translateLabel(displayLabel) || 'Unknown',
         value: point.value,
       };
     });

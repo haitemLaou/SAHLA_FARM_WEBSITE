@@ -1,4 +1,4 @@
-import { Routes, Route } from "react-router";
+import { Routes, Route, Outlet } from "react-router";
 import { useState } from "react";
 import Dashboard from "./pages/dashboard.jsx";
 import AIchat from "./pages/aiChat.jsx";
@@ -15,15 +15,22 @@ import useFarmPreferences from "./hooks/useFarmPreferences";
 import ProtectedRoute from "./pages/ProtectedRoute .jsx";
 import ForgotPassword from './auth/ForgotPassword'
 import ResetPassword from './auth/ResetPassword'
-import { useHAStatus, INVALID_STATUSES } from "./context/HAStatusContext";
+import { HAStatusProvider, useHAStatus, INVALID_STATUSES } from "./context/HAStatusContext";
 
+// Import your new Landing Page
+import LandingPage from "./pages/LandingPage.jsx"; 
 
-function App() {
-  // Temporary frontend flag until backend controls HA credentials onboarding state.
+// This layout ONLY blocks access. It assumes HAStatusProvider is higher up in the tree.
+const HARequiredLayout = () => {
   const { haStatus, haLoading } = useHAStatus();
 
-  // App is intentionally thin: pages read/write shared state through storage-backed hooks.
-  // History remains prop-driven, so we expose current unit preferences here.
+  if (haLoading) return null; 
+  if (INVALID_STATUSES.includes(haStatus)) return <HACredentialsRequired />;
+  
+  return <Outlet />; 
+};
+
+function App() {
   const {
     temperatureUnit,
     humidityUnit,
@@ -31,53 +38,54 @@ function App() {
     lightIntensityUnit,
   } = useFarmPreferences();
 
-  const protectedElement = (element) =>{
-    if (haLoading) return null;
-    if (INVALID_STATUSES.includes(haStatus)) return <HACredentialsRequired />;
-    return element;
-  }
   return (
     <>
       <Routes>
-        {/* Public routes — no auth needed */}
+        {/* --- PUBLIC ROUTES --- */}
+        <Route path="/" element={<LandingPage />} />
+        
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<SignUp />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password" element={<ResetPassword />} />
         
-        {/* Protected routes — ProtectedRoute checks Supabase session */}
-        <Route element={<ProtectedRoute/>}>
-          <Route path="/" element={<Layout />}>
-            <Route index element={protectedElement(<Dashboard />)} />
+        {/* --- PROTECTED ROUTES --- */}
+        <Route element={<ProtectedRoute />}>
+          
+          {/* 1. Put the Provider HERE.
+            Now ALL protected pages (including Settings/Chat) can use useHAStatus() without crashing.
+          */}
+          <Route element={<HAStatusProvider><Layout /></HAStatusProvider>}>
+            
+            {/* --- GROUP A: Strict Routes --- */}
+            {/* 2. Put the Guard HERE. These pages will be blocked if HA is down. */}
+            <Route element={<HARequiredLayout />}>
+              {/* Removed the 'index' route so '/' maps exclusively to LandingPage. 
+                  Users must navigate to '/dashboard' for the app home. */}
+              <Route path="dashboard" element={<Dashboard />} />
+              <Route
+                path="history"
+                element={
+                  <History
+                    temperatureUnit={temperatureUnit}
+                    humidityUnit={humidityUnit}
+                    soilMoistureUnit={soilMoistureUnit}
+                    lightIntensityUnit={lightIntensityUnit}
+                  />
+                }
+              />
+              <Route path="stream" element={<CamStream />} />
+              <Route path="notifications" element={<Notifications />} />
+            </Route>
 
-            <Route
-              path="/dashboard"
-              element={protectedElement(<Dashboard />)}
-            />
+            {/* --- GROUP B: Flexible Routes --- */}
+            {/* These pages won't be blocked, but can still safely read haStatus if they want to. */}
+            <Route path="chat" element={<AIchat />} />
+            <Route path="settings" element={<Settings />} />
 
-            <Route
-              path="/history"
-              element={protectedElement(
-                <History
-                  temperatureUnit={temperatureUnit}
-                  humidityUnit={humidityUnit}
-                  soilMoistureUnit={soilMoistureUnit}
-                  lightIntensityUnit={lightIntensityUnit}
-                />,
-              )}
-            />
-            <Route path="/stream" element={protectedElement(<CamStream />)} />
-
-            <Route path="/chat" element={protectedElement(<AIchat />)} />
-
-            <Route
-              path="/notifications"
-              element={protectedElement(<Notifications />)}
-            />
-
-            <Route path="/settings" element={<Settings />} />
           </Route>
 
+          {/* Catch-all for protected routes */}
           <Route path="*" element={<NotFound />} />
         </Route>
       </Routes>

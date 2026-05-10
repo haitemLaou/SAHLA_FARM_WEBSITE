@@ -66,11 +66,11 @@ export default function Login() {
       if (signinError) {
         // Handle specific error cases
         if (signinError.message.includes('Invalid login credentials')) {
-          throw new Error('Invalid email or password. Please try again.');
+          throw new Error(t('login.errors.invalidCredentials'));
         } else if (signinError.message.includes('Email not confirmed')) {
-          throw new Error('Please verify your email address before logging in.');
+          throw new Error(t('login.errors.unverifiedEmail'));
         } else {
-          throw signinError;
+          throw new Error(t('login.errors.genericError'));
         };
       };
       if (data.session) {
@@ -110,18 +110,23 @@ export default function Login() {
     <div className='flex min-h-screen bg-[#F8FFF6] font-newblack'>
       <LanguageSwitcher />
       {/* left side */}
-      <div className='flex flex-col w-full laptop:w-1/2 justify-between h-screen min-h-screen pt-[clamp(18px,3.6vh,48px)] pb-[clamp(10px,1.8vh,24px)] single-short:pt-[12px] single-short:pb-[8px] single-tall:pt-[54px] single-tall:pb-[30px] single-taller:pt-[66px] single-taller:pb-[36px]'>
-        <div className='flex flex-col items-center justify-center flex-[0.9] min-h-[clamp(110px,16vh,220px)] gap-[clamp(6px,1.1vh,14px)] single-short:min-h-[94px] single-short:gap-[6px] single-tall:min-h-[240px] single-tall:gap-[14px] single-taller:min-h-[280px] single-taller:gap-[18px]'>
+      <div className='flex flex-col w-full laptop:w-1/2 justify-start items-center h-screen min-h-screen pt-[12vh] pb-[clamp(10px,1.8vh,24px)] single-short:pt-[8vh] single-tall:pt-[15vh] single-taller:pt-[18vh]'>
+        
+        {/* Title Section */}
+        <div className='flex flex-col items-center justify-center w-full gap-[clamp(6px,1.1vh,14px)] mb-6 single-short:mb-4 single-tall:mb-10 single-taller:mb-12'>
           <h1 className='font-bold text-black text-[28px] xs:text-[30px] md:text-[34px] laptop:text-[36px] single-tall:text-[42px] single-taller:text-[48px] text-center'>{t('login.welcomeBackTitle')}</h1>
           <p className='text-[#636364] font-normal text-[16px] xs:text-[18px] md:text-[20px] laptop:text-[23px] single-tall:text-[25px] single-taller:text-[28px] text-center px-4'>{t('login.welcomeBackSubtitle')}</p>
         </div>
- {error && (
+
+        {error && (
           <div className='bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mx-auto w-[80%] mb-4'>
             {error}
           </div>
         )}
+
+        {/* Form Section */}
         <form
-          className='flex items-center justify-center flex-[1.35] gap-[clamp(16px,2.4vh,34px)] flex-col mt-[clamp(8px,1.8vh,24px)] min-h-[clamp(320px,44vh,560px)] single-short:min-h-[300px] single-short:gap-[12px] single-short:mt-[8px] single-tall:min-h-[610px] single-tall:gap-[34px] single-tall:mt-[18px] single-taller:min-h-[700px] single-taller:gap-[40px] single-taller:mt-[24px]'
+          className='w-full flex items-center justify-start flex-col gap-[clamp(16px,2.4vh,34px)] single-short:gap-[12px] single-tall:gap-[34px] single-taller:gap-[40px]'
           onSubmit={handleSubmit}
         >
           {/* email */}
@@ -131,7 +136,8 @@ export default function Login() {
               <span className='font-light text-[30px] single-tall:text-[38px] single-taller:text-[42px] text-[#929292]'><FaRegEnvelope /></span>
               <input
                 type="text"
-                className='outline-none text-[clamp(1.5ch,2vw,2.2ch)] single-tall:text-[2.55ch] single-taller:text-[2.8ch] text-[#444444] px-[12px] py-[3px] bg-transparent max-w-[80%]'
+                /* dir="ltr" */
+                className='outline-none text-[clamp(1.5ch,2vw,2.2ch)] single-tall:text-[2.55ch] single-taller:text-[2.8ch] text-[#444444] px-[12px] py-[3px] bg-transparent w-full'
                 placeholder='you@example.com'
                 required
                 onChange={(e) => setEmail(e.target.value)}
@@ -147,7 +153,7 @@ export default function Login() {
               <span className='font-light text-[25px] single-tall:text-[36px] single-taller:text-[40px] text-[#929292]'><FaLock /></span>
               <input
                 type={showPass ? "text" : "password"}
-                className='outline-none text-[clamp(1.5ch,2vw,2.2ch)] single-tall:text-[2.55ch] single-taller:text-[2.8ch] text-[#444444] px-[12px] py-[3px] bg-transparent max-w-[80%]'
+                className='outline-none text-[clamp(1.5ch,2vw,2.2ch)] single-tall:text-[2.55ch] single-taller:text-[2.8ch] text-[#444444] px-[12px] py-[3px] bg-transparent w-full'
                 placeholder={t('login.passwordPlaceholder')}
                 required
                 onChange={(e) => setPassword(e.target.value)}
@@ -179,7 +185,7 @@ export default function Login() {
               disabled={loading}
               className='bg-[#55BB33] w-full py-3 rounded-[6px] font-bold text-white hover:bg-[#66cd43] transition disabled:opacity-50'
             >
-              {loading ? 'Signing in...' : `${t('login.signInButton')}`}
+              {loading ? `${t('login.signingIn')}` : `${t('login.signInButton')}`}
             </button>
             <Link to="/signup" className='font-bold underline text-[#1A3D00]'>{t('login.createAccount')}</Link>
           </div>

@@ -5,6 +5,8 @@ import { TriangleAlert } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import AlertModal from './AlertModal';
 import { formatWarningsToUI } from '../../functions/transformWarningsDashboard';
+import DynamicTranslator from '../Translation/DynamicTranslator';
+
 
 // Optional: map warning title to an icon URL (if you have custom SVG icons)
 // For simplicity, we'll use a default alert icon – you can extend.
@@ -25,7 +27,7 @@ const getSeverityColor = (severity = 50) => {
 };
 
 export default function MonitoringAlerts({ warnings = [] }) {
-  const { t } = useTranslation();
+  const { t , i18n} = useTranslation();
   const [selectedAlert, setSelectedAlert] = useState(null);
 
   const warningsUI = formatWarningsToUI(warnings);
@@ -33,6 +35,17 @@ export default function MonitoringAlerts({ warnings = [] }) {
 
   // Filter only active warnings (status === "active")
   const activeWarnings = (warnings || []).filter(w => w.status === 'active');
+  function formatString(str) {
+    if (!str) return '';
+    
+    // Replace all underscores with spaces
+    const withSpaces = str.replace(/_/g, ' ');
+    
+    // Capitalize the first letter and lowercase the rest
+    return withSpaces.charAt(0).toUpperCase() + withSpaces.slice(1).toLowerCase();
+  }
+
+
 
   return (
     <>
@@ -95,9 +108,7 @@ export default function MonitoringAlerts({ warnings = [] }) {
                   }}
                   whileTap={{ scale: 0.98 }}
                 >
-                  <span className="text-[#FFE7DF] text-[0.9rem] font-normal leading-snug pe-3">
-                    {t(`warnings.${warning.title}.title`, warning.title)}
-                  </span>
+                  <DynamicTranslator text={formatString(warning.title)} language={i18n.language} className="text-[#FFE7DF] text-[0.9rem] font-bold leading-snug pe-3" />
                   <div
                     className="shrink-0 w-5 h-5"
                     style={{

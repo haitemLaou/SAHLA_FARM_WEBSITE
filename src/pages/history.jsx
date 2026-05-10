@@ -7,7 +7,6 @@ import useHistory from '../hooks/useHistory'
 import useHistoryDetail from '../hooks/useHistoryDetail'  // ✅ uncommented
 import HACredentialsRequired from './haCredentialsRequired'
 import DynamicTranslator from '../utilities/components/Translation/DynamicTranslator'
-import { translateText } from '../utilities/functions/translateText'
 import useLiveState from '../hooks/useLiveState'
 import { DASHBOARD_SENSOR_OPTIONS } from '../utilities/data/dashboardData'
 
@@ -47,36 +46,71 @@ const ClockIcon = ({ size = 15, color = "#1A3D00", opacity = 0.73 }) => (
   </svg>
 )
 
+
 function DatePicker({ value, onChange }) {
-  const { t , i18n} = useTranslation();
+  const { t, i18n } = useTranslation();
   const isAr = i18n.language === 'ar';
-  const MONTHS = [t('history.months.january'), t('history.months.february'), t('history.months.march'), t('history.months.april'), t('history.months.may'), t('history.months.june'), t('history.months.july'), t('history.months.august'), t('history.months.september'), t('history.months.october'), t('history.months.november'), t('history.months.december')]
-  const DAY_NAMES = [t('history.days.su'), t('history.days.mo'), t('history.days.tu'), t('history.days.we'), t('history.days.th'), t('history.days.fr'), t('history.days.sa')]
-  const [isOpen, setIsOpen] = useState(false)
-  const [viewYear, setViewYear] = useState(new Date().getFullYear())
-  const [viewMonth, setViewMonth] = useState(new Date().getMonth())
-  const ref = useRef(null)
-  const pad = (n) => String(n).padStart(2, "0")
-  const today = new Date()
-  const selectedDate = value ? (() => { const [d, m, y] = value.split("-"); return { y: +`20${y}`, m: +m - 1, d: +d } })() : null
-  const displayValue = value || null
+  const MONTHS = [t('history.months.january'), t('history.months.february'), t('history.months.march'), t('history.months.april'), t('history.months.may'), t('history.months.june'), t('history.months.july'), t('history.months.august'), t('history.months.september'), t('history.months.october'), t('history.months.november'), t('history.months.december')];
+  const DAY_NAMES = [t('history.days.su'), t('history.days.mo'), t('history.days.tu'), t('history.days.we'), t('history.days.th'), t('history.days.fr'), t('history.days.sa')];
+  
+  const [isOpen, setIsOpen] = useState(false);
+  const [viewYear, setViewYear] = useState(new Date().getFullYear());
+  const [viewMonth, setViewMonth] = useState(new Date().getMonth());
+  const ref = useRef(null);
+  
+  const pad = (n) => String(n).padStart(2, "0");
+  const today = new Date();
+  
+  const displayValue = value || null;
+
+  const [tempDate, setTempDate] = useState(null);
+
+  useEffect(() => {
+    if (isOpen) {
+      const currentParsed = value ? (() => { const [d, m, y] = value.split("-"); return { y: +`20${y}`, m: +m - 1, d: +d } })() : null;
+      setTempDate(currentParsed);
+      if (currentParsed) {
+        setViewMonth(currentParsed.m);
+        setViewYear(currentParsed.y);
+      } else {
+        setViewMonth(today.getMonth());
+        setViewYear(today.getFullYear());
+      }
+    }
+  }, [isOpen, value]);
+
   useEffect(() => {
     const handler = (e) => { if (ref.current && !ref.current.contains(e.target)) setIsOpen(false) }
-    document.addEventListener("mousedown", handler)
-    return () => document.removeEventListener("mousedown", handler)
-  }, [])
-  const changeMonth = (dir) => { let m = viewMonth + dir, y = viewYear; if (m > 11) { m = 0; y++ } if (m < 0) { m = 11; y-- } setViewMonth(m); setViewYear(y) }
-  const changeYear = (dir) => setViewYear((y) => y + dir)
-  const pickDay = (d) => { const yy = String(viewYear).slice(-2); onChange(`${pad(d)}-${pad(viewMonth + 1)}-${yy}`); setIsOpen(false) }
-  const firstDay = new Date(viewYear, viewMonth, 1).getDay()
-  const daysInMonth = new Date(viewYear, viewMonth + 1, 0).getDate()
-  const prevMonthDays = new Date(viewYear, viewMonth, 0).getDate()
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, []);
+
+  const changeMonth = (dir) => { let m = viewMonth + dir, y = viewYear; if (m > 11) { m = 0; y++ } if (m < 0) { m = 11; y-- } setViewMonth(m); setViewYear(y) };
+  const changeYear = (dir) => setViewYear((y) => y + dir);
+  
+  const handleDayClick = (d) => { 
+    setTempDate({ d, m: viewMonth, y: viewYear });
+  };
+
+  const handleSet = () => {
+    if (tempDate) {
+      const yy = String(tempDate.y).slice(-2);
+      onChange(`${pad(tempDate.d)}-${pad(tempDate.m + 1)}-${yy}`);
+    }
+    setIsOpen(false);
+  };
+
+  const firstDay = new Date(viewYear, viewMonth, 1).getDay();
+  const daysInMonth = new Date(viewYear, viewMonth + 1, 0).getDate();
+  const prevMonthDays = new Date(viewYear, viewMonth, 0).getDate();
+
   return (
     <div className="relative" ref={ref}>
       <div onClick={() => setIsOpen(!isOpen)} className={`bg-white rounded-lg border-2 outline-none cursor-pointer flex justify-between items-center transition-all duration-200 px-2 py-1 text-[10px] md:text-[16px] ${isOpen ? "border-[#55BB33] shadow-[0_0_4px_0_#55BB33]" : "border-[#C0C5D0] hover:border-[#55BB33] hover:shadow-[0_0_4px_0_#55BB33]"}`}>
         <span>{displayValue || t('history.selectDate')}</span>
         <svg className={`flex-shrink-0 transition-transform duration-200 ${isOpen ? "rotate-180" : ""} w-3 h-3 md:w-3.5 md:h-3.5 lg:w-4 lg:h-4`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
       </div>
+
       {isOpen && (
         <div className={`absolute ${isAr ? "right-0" : "left-0"} top-full w-[220px] md:w-[260px] mt-1.5 md:mt-2 bg-white rounded-xl shadow-[0_0_8px_#4b53489c] z-50 overflow-hidden`}>
           <div className="flex items-center justify-between border-b border-gray-100 px-1.5 py-1 md:px-2 md:py-1.5 lg:px-3 lg:py-2">
@@ -88,17 +122,37 @@ function DatePicker({ value, onChange }) {
             </div>
             <button onClick={() => changeMonth(1)} className="rounded hover:bg-[rgba(176,255,146,0.49)] text-gray-600 leading-none px-1 text-xs md:text-sm lg:text-base">›</button>
           </div>
+
           <div className="p-1 md:p-1.5 lg:p-2">
             <div className="grid grid-cols-7">{DAY_NAMES.map((n) => (<div key={n} className="text-center font-semibold text-gray-400 text-[6px] py-0.5 md:text-[8px] md:py-1 lg:text-[9px]">{n}</div>))}</div>
             <div className="grid grid-cols-7">
               {Array.from({ length: firstDay }, (_, i) => (<div key={`prev-${i}`} className="text-center text-gray-300 text-[7px] py-0.5 md:text-[10px] md:py-1 lg:text-[11px]">{prevMonthDays - firstDay + 1 + i}</div>))}
               {Array.from({ length: daysInMonth }, (_, i) => {
-                const d = i + 1
-                const isToday = d === today.getDate() && viewMonth === today.getMonth() && viewYear === today.getFullYear()
-                const isSelected = selectedDate && selectedDate.d === d && selectedDate.m === viewMonth && selectedDate.y === viewYear
-                return (<div key={d} onClick={() => pickDay(d)} className={`text-center rounded cursor-pointer transition-all duration-150 text-[7px] py-0.5 md:text-[10px] md:py-1 lg:text-[11px] lg:py-1.5 ${isSelected ? "bg-[#55BB33] text-white font-medium" : isToday ? "font-bold text-[#55BB33] hover:bg-[rgba(176,255,146,0.49)]" : "text-gray-700 hover:bg-[rgba(176,255,146,0.49)]"}`}>{d}</div>)
+                const d = i + 1;
+                const isToday = d === today.getDate() && viewMonth === today.getMonth() && viewYear === today.getFullYear();
+                const isSelected = tempDate && tempDate.d === d && tempDate.m === viewMonth && tempDate.y === viewYear;
+                
+                return (
+                  <div 
+                    key={d} 
+                    onClick={() => handleDayClick(d)} 
+                    className={`text-center rounded cursor-pointer transition-all duration-150 text-[7px] py-0.5 md:text-[10px] md:py-1 lg:text-[11px] lg:py-1.5 ${isSelected ? "bg-[#55BB33] text-white font-medium" : isToday ? "font-bold text-[#55BB33] hover:bg-[rgba(176,255,146,0.49)]" : "text-gray-700 hover:bg-[rgba(176,255,146,0.49)]"}`}
+                  >
+                    {d}
+                  </div>
+                )
               })}
             </div>
+          </div>
+
+          <div className="border-t border-gray-100 p-1 md:p-1.5 bg-gray-50 flex justify-end">
+             <button
+               onClick={handleSet}
+               disabled={!tempDate}
+               className="bg-[#55BB33] text-white px-2 py-0.5 md:px-3 md:py-1 rounded text-[8px] md:text-[11px] font-semibold hover:bg-[#48a32a] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+             >
+               {t('history.set', 'Set')}
+             </button>
           </div>
         </div>
       )}
@@ -205,7 +259,7 @@ function TimePicker({ value, onChange }) {
               onClick={handleSetTime}
               className="w-full bg-[#55BB33] hover:bg-[#469e29] text-white text-[12px] md:text-[14px] font-semibold py-1.5 rounded-lg transition-colors shadow-sm"
             >
-              {t('history.timepicker.set', 'Set')}
+              {t('history.set', 'Set')}
             </button>
           </div>
           
@@ -265,7 +319,7 @@ const CustomDropdown = ({ value, onChange, options, placeholder, getLabel = (opt
 const CustomDropdownCrop = ({ value, onChange, options, placeholder, getLabel = (opt) => opt }) => {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef(null);
-
+  const { i18n } = useTranslation();
   useEffect(() => {
     const handleClickOutside = (event) => { 
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) setIsOpen(false); 
@@ -282,8 +336,8 @@ const CustomDropdownCrop = ({ value, onChange, options, placeholder, getLabel = 
         onClick={() => setIsOpen(!isOpen)} 
         className="bg-white rounded-lg text-[10px] md:text-[16px] hover:border-[#55BB33] border-2 border-[#C0C5D0] outline-none md:px-4 px-2 py-1 hover:shadow-[0_0_4px_0_#55BB33] cursor-pointer flex justify-between items-center transition-all duration-200"
       >
-        <span className={!selectedOption ? 'text-gray-400' : 'text-gray-700'}>
-          {selectedOption ? getLabel(selectedOption) : placeholder || 'Select option'}
+        <span className={'text-gray-900'}>
+          <DynamicTranslator text={selectedOption ? getLabel(selectedOption) : placeholder || 'Select option'} language={i18n.language} />
         </span>
         <svg className={`w-4 h-4 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
@@ -299,7 +353,7 @@ const CustomDropdownCrop = ({ value, onChange, options, placeholder, getLabel = 
                 onClick={() => { onChange(option); setIsOpen(false); }} 
                 className={`px-4 py-2.5 cursor-pointer transition-all duration-200 text-[10px] md:text-[16px] ${value === option ? 'bg-[#55BB33] text-white font-medium' : 'text-gray-700 hover:bg-[rgba(176,255,146,0.49)] hover:text-[#000000]'} border-b border-gray-100 last:border-b-0`}
               >
-                {getLabel(option)}
+                <DynamicTranslator text={getLabel(option)} language={i18n.language} />
               </div>
             ))}
           </div>
@@ -391,14 +445,14 @@ export default function History({ temperatureUnit, humidityUnit, soilMoistureUni
           <label className='font-newblack font-bold text-black/70 text-[10px] md:text-[16px]'>
             {t('history.labels.crop')}
           </label>
-          <CustomDropdown 
+          <CustomDropdownCrop 
             value={Input.crop} 
             onChange={(val) => {
               setInput({ ...Input, crop: val });
               setDisplayCrop(val); // Update the visible text box
             }} 
             options={cropOptions} 
-            placeholder={t('history.placeholders.crop', 'Select crop')} 
+            placeholder={t('history.selectCrop', 'Select crop')} 
           />
         </div>
         <div className="flex flex-col flex-1 md:min-w-[150px] min-w-[80px]">
@@ -412,7 +466,7 @@ export default function History({ temperatureUnit, humidityUnit, soilMoistureUni
         <div className='flex flex-col flex-1 md:min-w-[150px] min-w-[80px] bg-[#192514] text-[#E8FFE0] text-[10px] md:text-[16px] items-center justify-center self-end h-fit md:py-[5px] py-[6px] rounded-lg cursor-pointer'
           onClick={() => {
             setInput({ date: '', time: '', crop: '', growthStage: "all", weather: "all" });
-            setDisplayCrop(''); // Clear the visible text box
+            setDisplayCrop(''); 
           }}>
           {t('history.buttons.reset')}
         </div>

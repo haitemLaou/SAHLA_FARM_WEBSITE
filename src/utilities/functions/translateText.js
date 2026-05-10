@@ -1,14 +1,17 @@
 import i18n from "i18next";
 
+
 // ─── Config ────────────────────────────────────────────────────────────────
 const TRANSLATOR_URLS = [
-  "https://script.google.com/macros/s/AKfycbx8_8KIcVPCRw2UpvUFRl3m6hRzpVf8b22oKDjNQsvio01PnwUkf47vfNzoocS9ATtkzw/exec",
-  "https://script.google.com/macros/s/AKfycbzam1-v_3WuWak5pzt-ngD_DPQpnRj24RH4K2rcokWj3xE74KzWR-tRkD2zwiDg1ity8g/exec",
-  "https://script.google.com/macros/s/AKfycbw46jmC_UgYhTLGOf7wLK_YP_EfBtbY__VjmngeB95SxxTWDjBXdrp_Rqx4uiicF74_/exec",
-  "https://script.google.com/macros/s/AKfycbzK7BfxaXbn3dz95SCZPCbt9a8JMqtOFVQyTrWNk-c3wW0Hw6hNaKg8kjNlwtI7ztQ/exec",
-];
+  process.env.REACT_APP_TRANSLATOR_URL_1,
+  process.env.REACT_APP_TRANSLATOR_URL_2,
+  process.env.REACT_APP_TRANSLATOR_URL_3,
+  process.env.REACT_APP_TRANSLATOR_URL_4,
+  process.env.REACT_APP_TRANSLATOR_URL_5,
+  process.env.REACT_APP_TRANSLATOR_URL_6,
+].filter(Boolean);
 
-const SECRET_KEY = "sahla2026";
+const SECRET_KEY = process.env.REACT_APP_TRANSLATOR_SECRET;
 
 const cache = {};
 const inFlight = {};

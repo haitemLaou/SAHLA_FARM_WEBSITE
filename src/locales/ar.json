@@ -30,7 +30,8 @@
         "tokenPlaceholder": "أدخل رمز الوصول",
         "errorRequired": "الرابط والرمز مطلوبان.",
         "cancel": "إلغاء",
-        "save": "حفظ"
+        "save": "حفظ",
+        "connecting": "جاري الاتصال..."
       },
     "editProfileModal": {
   "title": "تعديل الملف الشخصي",
@@ -122,6 +123,7 @@
     "earlier": "سابقاً"
   },
   "history": {
+    "set": "تعيين",
     "selectDate": "اختر التاريخ",
     "selectTime": "اختر الوقت",
     "selectCrop": "اختر المحصول",
@@ -132,6 +134,9 @@
     },
     "days": {
       "su": "أح", "mo": "إث", "tu": "ثلا", "we": "أر", "th": "خم", "fr": "جم", "sa": "سب"
+    },
+    "day":{
+      "sun": "الأحد", "mon": "الإثنين", "tue": "الثلاثاء", "wed": "الأربعاء", "thu": "الخميس", "fri": "الجمعة", "sat": "السبت"
     },
     "labels": {
       "date": "التاريخ",
@@ -150,8 +155,7 @@
     },
     "timepicker": {
       "hour": "ساعة",
-      "min": "دقيقة",
-      "set": "تعيين"
+      "min": "دقيقة"
     },
     "buttons": {
       "reset": "إعادة ضبط",
@@ -276,6 +280,7 @@
     "cropInfo": {
       "title": "معلومات المحصول",
       "crop": "المحصول",
+      "general": "عام",
       "enterCrop": "أدخل المحصول",
       "growthStage": "مرحلة النمو",
       "selectStage": "حدد المرحلة",
@@ -418,6 +423,7 @@
     "passwordPlaceholder": "كلمة المرور الخاصة بك",
     "rememberMe": "تذكرني",
     "forgotPassword": "هل نسيت كلمة المرور؟",
+    "signingIn": "جاري تسجيل الدخول...",
     "signInButton": "تسجيل الدخول",
     "createAccount": "مستخدم جديد في سهلة فارم؟ أنشئ حساباً",
     "demoMode": "وضع العرض التوضيحي",
@@ -428,7 +434,12 @@
     "feature1Title": "أتمتة ذكية",
     "feature1Desc": "مراقبة وأتمتة على الفور",
     "feature2Title": "منصة موحدة",
-    "feature2Desc": "كل شيء في مكان واحد"
+    "feature2Desc": "كل شيء في مكان واحد",
+    "errors": {
+      "invalidCredentials": "البريد الإلكتروني أو كلمة المرور غير صحيحة. يرجى المحاولة مرة أخرى.",
+      "unverifiedEmail": "يرجى التحقق من عنوان بريدك الإلكتروني قبل تسجيل الدخول.",
+      "genericError": "حدث خطأ غير متوقع. يرجى المحاولة مرة أخرى لاحقًا."
+    }
   },
   "resetPassword": {
     "passwordLengthError": "يجب أن تتكون كلمة المرور من 8 أحرف على الأقل",

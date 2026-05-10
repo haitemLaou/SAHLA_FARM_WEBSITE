@@ -1,6 +1,7 @@
 import { Thermometer, Droplets, Wind, Sun } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
+import DynamicTranslator from '../Translation/DynamicTranslator';
 
 const ICON_MAP = {
   temperature: Thermometer,
@@ -10,7 +11,7 @@ const ICON_MAP = {
 };
 
 export default function SensorCard({ sensor, isSelected, onClick }) {
-  const { t } = useTranslation();
+  const { t , i18n} = useTranslation();
   const Icon = ICON_MAP[sensor.id] || Thermometer;
   return (
     <motion.button
@@ -83,8 +84,7 @@ export default function SensorCard({ sensor, isSelected, onClick }) {
           animate={{ color: isSelected ? 'rgba(247, 255, 246, 0.85)' : '#879284' }}
           className="text-[11px] sm:text-[12px] mt-1 sm:mt-1.5 leading-snug line-clamp-2"
         >
-          {/* Dynamically translates the description, falling back to the prop string */}
-          {sensor.description}
+          <DynamicTranslator text={sensor.description} language={i18n.language} className="text-[11px] sm:text-[12px] mt-1 sm:mt-1.5 leading-snug line-clamp-2" />
         </motion.p>
       </div>
     </motion.button>

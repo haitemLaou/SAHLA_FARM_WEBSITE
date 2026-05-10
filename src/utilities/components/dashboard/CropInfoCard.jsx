@@ -2,6 +2,8 @@ import { ClipboardCheck } from 'lucide-react';
 import CropInfoDropdown from './CropInfoDropdown';
 import { useTranslation } from 'react-i18next';
 import { useCallback } from 'react';
+import DynamicTranslator from '../Translation/DynamicTranslator';
+import {translateText } from '../../functions/translateText'
 
 export default function CropInfoCard({
   crop,
@@ -17,24 +19,25 @@ export default function CropInfoCard({
   socket,                 
   liveCropOptions,       
 }) {
-  const { t } = useTranslation();
+  const { t , i18n} = useTranslation();
 
   // Use live HA options if available, otherwise fallback to local cropOptions
   const displayOptions = (liveCropOptions && liveCropOptions.length) ? liveCropOptions : cropOptions;
 
   // Override the add-crop behaviour: send to HA via socket, then update local state
-  const handleAddCrop = useCallback((newCropName) => {
+  const handleAddCrop = useCallback(async (newCropName) => {
     const trimmed = newCropName.trim();
     if (!trimmed) return;
 
-    // If we have a socket, tell the backend to add the crop to HA
+    // Always save in English regardless of the app's current language
+    const englishName = await translateText(trimmed, 'en');
+    const nameToSave = englishName?.trim() || trimmed;
+
     if (socket) {
-      socket.emit('add_crop', { newCropName: trimmed });
-      // Optional: show a temporary "Adding…" indicator; we rely on liveCropOptions to update later
+      socket.emit('add_crop', { newCropName: nameToSave });
     } else {
-      // Fallback: only local update (original behaviour)
-      onAddCropOption?.(trimmed);
-      setCrop(trimmed);
+      onAddCropOption?.(nameToSave);
+      setCrop(nameToSave);
     }
   }, [socket, onAddCropOption, setCrop]);
 
@@ -117,7 +120,7 @@ export default function CropInfoCard({
             />
           </div>
           <p className="text-xs leading-relaxed" style={{ color: 'rgba(255,255,255,0.80)' }}>
-            {recommendation}
+            <DynamicTranslator text={recommendation} language={i18n.language} className="text-xs leading-relaxed" style={{ color: 'rgba(255,255,255,0.80)' }} />
           </p>
         </div>
       </div>

@@ -30,7 +30,8 @@
         "tokenPlaceholder": "Enter access token",
         "errorRequired": "URL and token are required.",
         "cancel": "Cancel",
-        "save": "Save"
+        "save": "Save",
+        "connecting": "'Connecting...'"
       },
     "editProfileModal": {
       "title": "Edit Profile",
@@ -122,6 +123,7 @@
     "earlier": "EARLIER"
   },
   "history": {
+    "set": "SET",
     "selectDate": "Select Date",
     "selectTime": "Select Time",
     "selectCrop": "Select Crop",
@@ -132,6 +134,9 @@
     },
     "days": {
       "su": "Su", "mo": "Mo", "tu": "Tu", "we": "We", "th": "Th", "fr": "Fr", "sa": "Sa"
+    },
+    "day":{
+      "sun": "Sun", "mon": "Mon", "tue": "Tue", "wed": "Wed", "thu": "Thu", "fri": "Fri", "sat": "Sat"
     },
     "labels": {
       "date": "Date",
@@ -150,8 +155,7 @@
     },
     "timepicker": {
       "hour": "HOUR",
-      "min": "MIN",
-      "set": "SET"
+      "min": "MIN"
     },
     "buttons": {
       "reset": "RESET",
@@ -276,6 +280,7 @@
     "cropInfo": {
       "title": "Crop Information",
       "crop": "Crop",
+      "general": "General",
       "enterCrop": "Enter crop",
       "growthStage": "Growth Stage",
       "selectStage": "Select stage",
@@ -418,6 +423,7 @@
     "passwordPlaceholder": "your password",
     "rememberMe": "Remember me",
     "forgotPassword": "forgot password",
+    "signingIn": "Signing in...",
     "signInButton": "Sign in",
     "createAccount": "New to SAHLA FARM? Create an account",
     "demoMode": "Demo Mode",
@@ -428,7 +434,12 @@
     "feature1Title": "Smart Automation",
     "feature1Desc": "monitor & automate instantly",
     "feature2Title": "Unified Platform",
-    "feature2Desc": "everything in one single place"
+    "feature2Desc": "everything in one single place",
+    "errors": {
+      "invalidCredentials": "Invalid email or password. Please try again.",
+      "unverifiedEmail": "Please verify your email address before logging in.",
+      "genericError": "An unexpected error occurred. Please try again later."
+    }
   },
   "resetPassword": {
     "passwordLengthError": "Password must be at least 8 characters long",

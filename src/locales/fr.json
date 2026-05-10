@@ -30,7 +30,8 @@
       "tokenPlaceholder": "Entrez le jeton d'accès",
       "errorRequired": "L'URL et le jeton sont requis.",
       "cancel": "Annuler",
-      "save": "Enregistrer"
+      "save": "Enregistrer",
+      "connecting": "Connexion en cours..."
     },
     "editProfileModal": {
   "title": "Modifier le profil",
@@ -122,6 +123,7 @@
     "earlier": "PLUS TÔT"
   },
   "history": {
+    "set": "DÉFINIR",
     "selectDate": "Sélectionner la Date",
     "selectTime": "Sélectionner l'Heure",
     "selectCrop": "Sélectionner la Culture",
@@ -150,6 +152,15 @@
       "fr": "Ve",
       "sa": "Sa"
     },
+    "day": {
+      "sun": "Dim",
+      "mon": "Lun",
+      "tue": "Mar",
+      "wed": "Mer",
+      "thu": "Jeu",
+      "fri": "Ven",
+      "sat": "Sam"
+    },
     "labels": {
       "date": "Date",
       "time": "Heure",
@@ -167,8 +178,7 @@
     },
     "timepicker": {
       "hour": "HEURE",
-      "min": "MIN",
-      "set": "DÉFINIR"
+      "min": "MIN"
     },
     "buttons": {
       "reset": "RÉINITIALISER",
@@ -293,6 +303,7 @@
     "cropInfo": {
       "title": "Informations sur la Culture",
       "crop": "Culture",
+      "general": "Général",
       "enterCrop": "Entrer la culture",
       "growthStage": "Stade de Croissance",
       "selectStage": "Sélectionner le stade",
@@ -434,6 +445,7 @@
     "passwordPlaceholder": "votre mot de passe",
     "rememberMe": "Se souvenir de moi",
     "forgotPassword": "mot de passe oublié",
+    "signingIn": "Connexion en cours...",
     "signInButton": "Se connecter",
     "createAccount": "Nouveau sur SAHLA FARM ? Créer un compte",
     "demoMode": "Mode Démo",
@@ -444,7 +456,12 @@
     "feature1Title": "Automatisation Intelligente",
     "feature1Desc": "surveillez et automatisez instantanément",
     "feature2Title": "Plateforme Unifiée",
-    "feature2Desc": "tout en un seul endroit"
+    "feature2Desc": "tout en un seul endroit",
+    "errors": {
+      "invalidCredentials": "E-mail ou mot de passe invalide. Veuillez réessayer.",
+      "unverifiedEmail": "Veuillez vérifier votre adresse e-mail avant de vous connecter.",
+      "genericError": "Une erreur inattendue s'est produite. Veuillez réessayer plus tard."
+    }
   },
   "resetPassword": {
     "passwordLengthError": "Le mot de passe doit comporter au moins 8 caractères",

@@ -146,8 +146,10 @@ export default function SignUp() {
     <div className='flex min-h-screen bg-[#F8FFF6] font-newblack'>
       <LanguageSwitcher />
       {/* left side */}
-      <div className='flex flex-col w-full laptop:w-1/2 justify-between h-screen min-h-screen pt-[clamp(14px,2.6vh,34px)] pb-[clamp(8px,1.2vh,18px)] single-short:pt-[10px] single-short:pb-[6px] single-tall:pt-[44px] single-tall:pb-[22px] single-taller:pt-[54px] single-taller:pb-[28px]'>
-        <div className='flex flex-col items-center justify-center flex-[0.75] min-h-[clamp(90px,12vh,170px)] gap-[clamp(4px,0.8vh,10px)] single-short:min-h-[82px] single-short:gap-[4px] single-tall:min-h-[190px] single-tall:gap-[10px] single-taller:min-h-[220px] single-taller:gap-[12px]'>
+      <div className='flex flex-col w-full laptop:w-1/2 justify-start items-center h-screen min-h-screen pt-[12vh] pb-[clamp(8px,1.2vh,18px)] single-short:pt-[8vh] single-short:pb-[6px] single-tall:pt-[15vh] single-tall:pb-[22px] single-taller:pt-[18vh] single-taller:pb-[28px]'>
+        
+        {/* Title Section */}
+        <div className='flex flex-col items-center justify-center w-full gap-[clamp(4px,0.8vh,10px)] mb-6 single-short:mb-4 single-tall:mb-10 single-taller:mb-12'>
           <h1 className='font-bold text-black text-[28px] xs:text-[30px] md:text-[34px] laptop:text-[36px] single-tall:text-[40px] single-taller:text-[45px] text-center'>{t('signUp.title')}</h1>
           <p className='text-[#636364] font-normal text-[15px] xs:text-[16px] md:text-[18px] laptop:text-[20px] single-tall:text-[23px] single-taller:text-[26px] text-center px-4'>{t('signUp.subtitle')}</p>
         </div>
@@ -159,8 +161,9 @@ export default function SignUp() {
           </div>
         )}
 
+        {/* Form Section */}
         <form
-          className='flex items-center justify-center flex-[1.5] gap-[clamp(8px,1.2vh,14px)] flex-col mt-[clamp(4px,1vh,12px)] min-h-[clamp(360px,52vh,500px)] single-short:min-h-[350px] single-short:gap-[7px] single-short:mt-[4px] single-tall:min-h-[700px] single-tall:gap-[12px] single-tall:mt-[12px] single-taller:min-h-[790px] single-taller:gap-[14px] single-taller:mt-[16px]'
+          className='w-full flex items-center justify-start flex-col gap-[clamp(8px,1.2vh,14px)] single-short:gap-[7px] single-tall:gap-[12px] single-taller:gap-[14px]'
           onSubmit={handleSubmit}
         >
           <label className='flex flex-col items-start w-[80%] xs:w-[70%] gap-[4px]'>
@@ -170,7 +173,7 @@ export default function SignUp() {
               <input
                 name='username'
                 type='text'
-                className='outline-none text-[clamp(1.3ch,1.7vw,2ch)] single-tall:text-[2.4ch] single-taller:text-[2.65ch] text-[#444444] px-[10px] py-[2px] bg-transparent max-w-[90%]'
+                className='outline-none text-[clamp(1.3ch,1.7vw,2ch)] single-tall:text-[2.4ch] single-taller:text-[2.65ch] text-[#444444] px-[10px] py-[2px] bg-transparent w-full'
                 placeholder={t('signUp.usernamePlaceholder')}
                 required
                 onChange={(e) => setUsername(e.target.value)}
@@ -186,7 +189,7 @@ export default function SignUp() {
               <input
                 name='email'
                 type='email'
-                className='outline-none text-[clamp(1.3ch,1.7vw,2ch)] single-tall:text-[2.4ch] single-taller:text-[2.65ch] text-[#444444] px-[10px] py-[2px] bg-transparent max-w-[80%]'
+                className='outline-none text-[clamp(1.3ch,1.7vw,2ch)] single-tall:text-[2.4ch] single-taller:text-[2.65ch] text-[#444444] px-[10px] py-[2px] bg-transparent w-full'
                 placeholder='you@example.com'
                 required
                 onChange={(e) => setEmail(e.target.value)}
@@ -202,7 +205,7 @@ export default function SignUp() {
               <input
                 name='password'
                 type={showPass ? 'text' : 'password'}
-                className='outline-none text-[clamp(1.3ch,1.7vw,2ch)] single-tall:text-[2.4ch] single-taller:text-[2.65ch] text-[#444444] px-[10px] py-[2px] bg-transparent max-w-[80%]'
+                className='outline-none text-[clamp(1.3ch,1.7vw,2ch)] single-tall:text-[2.4ch] single-taller:text-[2.65ch] text-[#444444] px-[10px] py-[2px] bg-transparent w-full'
                 placeholder={t('signUp.passwordPlaceholder')}
                 required
                 onChange={handlePasswordChange}

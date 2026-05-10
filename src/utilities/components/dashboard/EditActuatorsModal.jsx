@@ -89,7 +89,7 @@ export default function EditActuatorsModal({
                 transition={{ duration: 0.2 }}
               >
                 <div>
-                  <p className='text-base text-[#192514]'>{actuator.name}</p>
+                  <p className='text-base text-[#192514]'>{t(`history.historyCard.${actuator.name.toLowerCase()}`)} </p>
                   <p className='text-sm text-[rgba(25,37,20,0.62)] capitalize'>
                     {/* Translates "auto" or "semi-auto" */}
                     {t(`dashboard.editActuators.modes.${actuator.mode}`, actuator.mode)}

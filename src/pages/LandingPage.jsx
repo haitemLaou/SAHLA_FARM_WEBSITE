@@ -417,8 +417,8 @@ function Hero() {
       <div className="absolute top-[10%] right-[-5%] w-[600px] h-[600px] rounded-full pointer-events-none" style={{ background: "radial-gradient(circle, rgba(85,187,51,0.08) 0%, transparent 70%)" }} />
       <div className="absolute bottom-[5%] left-[-10%] w-[400px] h-[400px] rounded-full pointer-events-none" style={{ background: "radial-gradient(circle, rgba(189,214,48,0.07) 0%, transparent 70%)" }} />
 
-      <div className="max-w-6xl mx-auto px-6 py-20 w-full relative z-10">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-20 items-center">
+      <div className="w-full mx-auto px-6 py-20  relative z-10">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
           {/* Left */}
           <div className="flex flex-col gap-7">
             <div className="animate-fade" style={{ animationDelay: "0.1s" }}>
@@ -549,7 +549,7 @@ function Marquee() {
 function Features() {
   const { t } = useTranslation();
   return (
-    <section id="features" className="py-28 max-w-6xl mx-auto px-6">
+    <section id="features" className="py-28 w-full mx-auto px-6">
       <Reveal className="text-center mb-16">
         <span className="inline-flex items-center gap-1.5 text-xs font-semibold px-3.5 py-1.5 rounded-full mb-4" style={{ background: "rgba(85,187,51,0.12)", color: "#3a8a1e", border: "1px solid rgba(85,187,51,0.25)" }}>{t('features_badge')}</span>
         <h2 className="font-black leading-tight mb-4" style={{ fontSize: "clamp(32px,5vw,52px)", letterSpacing: "-0.03em", color: "var(--green-dark)" }}>
@@ -618,7 +618,7 @@ function HowItWorks() {
   return (
     <section id="how" className="py-28 relative overflow-hidden" style={{ background: "var(--green-dark)" }}>
       <div className="absolute top-0 right-0 w-[500px] h-[500px] rounded-full pointer-events-none" style={{ background: "radial-gradient(circle, rgba(85,187,51,0.08) 0%, transparent 70%)" }} />
-      <div className="max-w-6xl mx-auto px-6 relative z-10">
+      <div className="w-full mx-auto px-6 relative z-10">
         <Reveal className="text-center mb-16">
           <span className="inline-flex items-center gap-1.5 text-xs font-semibold px-3.5 py-1.5 rounded-full mb-4" style={{ background: "rgba(85,187,51,0.15)", color: "#7edd55", border: "1px solid rgba(85,187,51,0.3)" }}>{t('how_badge')}</span>
           <h2 className="font-black leading-tight text-white mb-4" style={{ fontSize: "clamp(32px,5vw,52px)", letterSpacing: "-0.03em" }}>
@@ -650,7 +650,7 @@ function HowItWorks() {
 function DashboardPreview() {
   const { t } = useTranslation();
   return (
-    <section id="dashboard" className="py-28 max-w-6xl mx-auto px-6">
+    <section id="dashboard" className="py-28 max-w-7xl mx-auto px-6">
       <Reveal className="text-center mb-16">
         <span className="inline-flex items-center gap-1.5 text-xs font-semibold px-3.5 py-1.5 rounded-full mb-4" style={{ background: "rgba(85,187,51,0.12)", color: "#3a8a1e", border: "1px solid rgba(85,187,51,0.25)" }}>{t('dash_badge')}</span>
         <h2 className="font-black leading-tight mb-4" style={{ fontSize: "clamp(32px,5vw,52px)", letterSpacing: "-0.03em", color: "var(--green-dark)" }}>
@@ -767,7 +767,7 @@ function About() {
 
   return (
     <section id="about" className="py-28 bg-white">
-      <div className="max-w-6xl mx-auto px-6">
+      <div className="w-full mx-auto px-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-20 items-center">
           <Reveal>
             <span className="inline-flex items-center gap-1.5 text-xs font-semibold px-3.5 py-1.5 rounded-full mb-6" style={{ background: "rgba(85,187,51,0.12)", color: "#3a8a1e", border: "1px solid rgba(85,187,51,0.25)" }}>{t('about_badge')}</span>
@@ -817,7 +817,7 @@ function Benefits() {
     { val: "0", label: t('bene_3_label'), desc: t('bene_3_desc'), dark: false, color: "var(--golden)" },
   ];
   return (
-    <section className="py-28 max-w-6xl mx-auto px-6">
+    <section className="py-28 w-full mx-auto px-6">
       <Reveal className="text-center mb-16">
         <span className="inline-flex items-center gap-1.5 text-xs font-semibold px-3.5 py-1.5 rounded-full mb-4" style={{ background: "rgba(85,187,51,0.12)", color: "#3a8a1e", border: "1px solid rgba(85,187,51,0.25)" }}>{t('bene_badge')}</span>
         <h2 className="font-black leading-tight" style={{ fontSize: "clamp(32px,5vw,52px)", letterSpacing: "-0.03em", color: "var(--green-dark)" }}>
@@ -844,7 +844,7 @@ function Benefits() {
 function CTA() {
   const { t } = useTranslation();
   return (
-    <section className="py-20 max-w-6xl mx-auto px-6">
+    <section className="py-20 w-full mx-auto px-6">
       <Reveal className="rounded-[32px] px-16 py-20 text-center relative overflow-hidden" style={{ background: "var(--green-dark)" }}>
         <div className="absolute -top-12 -right-12 w-72 h-72 rounded-full pointer-events-none" style={{ background: "radial-gradient(circle, rgba(85,187,51,0.15) 0%, transparent 70%)" }} />
         <div className="absolute -bottom-16 -left-10 w-64 h-64 rounded-full pointer-events-none" style={{ background: "radial-gradient(circle, rgba(189,214,48,0.1) 0%, transparent 70%)" }} />
@@ -893,7 +893,7 @@ function Contact() {
 
   return (
     <section id="contact" className="py-28 bg-white">
-      <div className="max-w-6xl mx-auto px-6">
+      <div className="w-full mx-auto px-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-20 items-start">
           <Reveal>
             <span className="inline-flex items-center gap-1.5 text-xs font-semibold px-3.5 py-1.5 rounded-full mb-6" style={{ background: "rgba(85,187,51,0.12)", color: "#3a8a1e", border: "1px solid rgba(85,187,51,0.25)" }}>{t('contact_badge')}</span>
@@ -995,7 +995,7 @@ function Footer() {
 
   return (
     <footer className="px-6 pt-16 pb-8" style={{ background: "var(--green-dark)" }}>
-      <div className="max-w-6xl mx-auto">
+      <div className="w-full mx-auto">
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-10 pb-12" style={{ borderBottom: "1px solid rgba(245,247,242,0.1)" }}>
           <div>
             <div className="flex items-center gap-2.5 mb-4">

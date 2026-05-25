@@ -15,6 +15,10 @@ import ForgotPassword from './auth/ForgotPassword';
 import ResetPassword from './auth/ResetPassword';
 import LandingPage from "./pages/LandingPage.jsx";
 import HelpPage from "./pages/Helppage.jsx";
+import MobileAppPage from "./pages/MobileAppPage.jsx";
+import BlogPage from "./pages/BlogPage.jsx";
+import PrivacyPage from "./pages/PrivacyPage.jsx";
+import TermsPage from "./pages/TermsPage.jsx";
 import { FarmProvider } from "./context/FarmContext.jsx";
 import { ActuatorProvider } from "./context/ActuatorContext.jsx";
 import { HAStatusProvider, useHAStatus, INVALID_STATUSES } from "./context/HAStatusContext";
@@ -40,6 +44,10 @@ function App() {
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/help" element={<HelpPage />} />
+        <Route path="/mobile-app" element={<MobileAppPage />} />
+        <Route path="/blog" element={<BlogPage />} />
+        <Route path="/privacy" element={<PrivacyPage />} />
+        <Route path="/terms" element={<TermsPage />} />
         
         {/* --- PROTECTED ROUTES --- */}
         <Route element={<ProtectedRoute />}>

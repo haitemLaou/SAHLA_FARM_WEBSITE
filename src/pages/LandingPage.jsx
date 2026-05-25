@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { Link } from "react-router";
+import { Link ,useNavigate  } from "react-router";
 import { useTranslation } from 'react-i18next';
 // ── CSS injected globally ──────────────────────────────────────────────────
 const globalStyles = `
@@ -251,7 +251,7 @@ function Reveal({ children, delay = 0, className = "" }) {
 
 
 // ── Nav ───────────────────────────────────────────────────────────────────
-function Nav() {
+export function Nav() {
   const { t } = useTranslation();
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
@@ -570,16 +570,16 @@ function Features() {
             <h3 className="font-black text-2xl mb-3" style={{color: "var(--green-dark)", letterSpacing: "-0.02em" }}>{t('features_f1_title')}</h3>
             <p className="text-sm leading-relaxed" style={{ color: "rgba(25,37,20,0.6)" }}>{t('features_f1_desc')}</p>
           </div>
-          <div className="grid grid-cols-2 gap-2.5">
+          <div className="grid grid-cols-2 gap-2.5 ">
             {[
               { label: t('features_f1_s1'), val: "45.2%", highlight: false },
               { label: t('features_f1_s2'), val: "24.5°C", highlight: true },
               { label: t('features_f1_s3'), val: "65%", highlight: false },
               { label: t('features_f1_s4'), val: "1450 lux", highlight: false },
             ].map((s) => (
-              <div key={s.label} className="rounded-2xl p-3.5" style={{ background: s.highlight ? "rgba(85,187,51,0.3)" : "rgba(255,255,255,0.08)" }}>
-                <div className="text-[10px] font-semibold uppercase tracking-widest mb-1.5" style={{ color: s.highlight ? "rgba(255,255,255,0.7)" : "rgba(255,255,255,0.5)" }}>{s.label}</div>
-                <div className="font-black text-2xl" style={{ color: s.highlight ? "white" : "#55BB33" }}>{s.val}</div>
+              <div key={s.label} className="rounded-2xl p-3.5" style={{ background: s.highlight ? "#55BB33" : "white" }}>
+                <div className="text-[10px] font-semibold uppercase tracking-widest mb-1.5" style={{ color: s.highlight ? "white" : "#192514" }}>{s.label}</div>
+                <div className="font-black text-2xl" style={{ color: s.highlight ? "white" : "#192514" }}>{s.val}</div>
               </div>
             ))}
           </div>
@@ -659,93 +659,9 @@ function DashboardPreview() {
         <p className="text-base mx-auto" style={{ color: "rgba(25,37,20,0.6)", lineHeight: 1.7, maxWidth: 560 }}>{t('dash_desc')}</p>
       </Reveal>
 
-      <Reveal className="bg-white rounded-[28px] overflow-hidden" style={{ border: "1px solid rgba(25,37,20,0.08)", boxShadow: "0 40px 100px rgba(25,37,20,0.12)" }}>
-        {/* Title bar */}
-        <div className="flex items-center gap-2 px-6 py-3.5" style={{ background: "#F5F7F2", borderBottom: "1px solid rgba(25,37,20,0.07)" }}>
-          {[{ c: "#ff5f57" }, { c: "#febc2e" }, { c: "#28c840" }].map((d) => (
-            <div key={d.c} className="w-3 h-3 rounded-full" style={{ background: d.c }} />
-          ))}
-          <div className="flex-1 text-center">
-            <div className="inline-flex items-center gap-2 bg-white rounded-lg px-3.5 py-1.5 text-xs" style={{ border: "1px solid rgba(25,37,20,0.1)", color: "rgba(25,37,20,0.5)" }}>
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10" /><path d="M2 12h20M12 2a15.3 15.3 0 010 20M12 2a15.3 15.3 0 000 20" /></svg>
-              sahlafarm.com/dashboard
-            </div>
-          </div>
-        </div>
-
-        <div className="grid" style={{ gridTemplateColumns: "72px 1fr", minHeight: 520 }}>
-          {/* Sidebar */}
-          <div className="flex flex-col items-center py-5 gap-5" style={{ background: "linear-gradient(180deg,rgba(43,32,51,1) 0%,rgba(28,35,42,1) 100%)" }}>
-            <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: "rgba(85,187,51,0.2)" }}>
-              <Logo size={20} />
-            </div>
-            {[
-              <svg key="home" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.5"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z" /><polyline points="9 22 9 12 15 12 15 22" /></svg>,
-              <svg key="msg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.35)" strokeWidth="1.5"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" /></svg>,
-              <svg key="cam" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.35)" strokeWidth="1.5"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z" /><circle cx="12" cy="13" r="4" /></svg>,
-            ].map((icon, i) => (
-              <div key={i} className="w-8 h-8 rounded-xl flex items-center justify-center" style={{ background: i === 0 ? "rgba(255,255,255,0.15)" : "transparent" }}>{icon}</div>
-            ))}
-          </div>
-
-          {/* Main */}
-          <div className="p-5 flex flex-col gap-3.5" style={{ background: "#F8FBF5" }}>
-            {/* Chart */}
-            <div className="bg-white rounded-2xl p-4" style={{ border: "1px solid rgba(25,37,20,0.07)" }}>
-              <div className="flex justify-between items-center mb-3">
-                <div>
-                  <div className="text-[11px] font-medium uppercase tracking-widest" style={{ color: "rgba(25,37,20,0.4)" }}>{t('dash_chart_title')}</div>
-                  <div className="font-black text-lg" style={{ color: "var(--green-dark)", letterSpacing: "-0.02em" }}>{t('dash_chart_status')}</div>
-                </div>
-                <div className="text-[11px] px-2.5 py-1 rounded-md" style={{ color: "rgba(25,37,20,0.5)", background: "rgba(25,37,20,0.06)" }}>{t('dash_chart_days')}</div>
-              </div>
-              <svg width="100%" height="70" viewBox="0 0 600 70" preserveAspectRatio="none">
-                <path d="M0,50 L86,42 L171,35 L257,55 L343,22 L428,30 L514,15 L600,28" fill="none" stroke="#55BB33" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                <path d="M0,50 L86,42 L171,35 L257,55 L343,22 L428,30 L514,15 L600,28 L600,70 L0,70Z" fill="rgba(85,187,51,0.07)" />
-              </svg>
-            </div>
-
-            {/* Sensor grid */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
-              {[
-                { label: t('dash_s1'), val: "45.2%", active: true },
-                { label: t('dash_s2'), val: "24.5°C", active: false },
-                { label: t('dash_s3'), val: "65%", active: false },
-                { label: t('dash_s4'), val: "1450 lux", active: false },
-              ].map((s) => (
-                <div key={s.label} className="rounded-2xl p-3" style={{ background: s.active ? "#55BB33" : "white", border: s.active ? "none" : "1px solid rgba(25,37,20,0.07)" }}>
-                  <div className="text-[9px] font-semibold uppercase tracking-widest mb-2" style={{ color: s.active ? "rgba(255,255,255,0.8)" : "rgba(25,37,20,0.4)" }}>{s.label}</div>
-                  <div className="font-black text-xl" style={{ color: s.active ? "white" : "var(--green-dark)", letterSpacing: "-0.02em" }}>{s.val}</div>
-                </div>
-              ))}
-            </div>
-
-            {/* Actuators + Crop */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-              <div className="flex flex-col gap-2.5">
-                {[
-                  { label: t('dash_act1'), time: "08:00 – 08:20", status: "OFF", on: false },
-                  { label: t('dash_act2'), time: "14:00 – 14:30", status: "ON", on: true },
-                ].map((a) => (
-                  <div key={a.label} className="rounded-2xl p-3.5 flex items-center justify-between" style={{ background: "#192514" }}>
-                    <div>
-                      <div className="text-[10px] font-medium" style={{ color: "rgba(255,255,255,0.5)" }}>{a.label}</div>
-                      <div className="text-sm font-bold text-white mt-0.5">{a.time}</div>
-                    </div>
-                    <div className="text-[11px] font-bold px-2.5 py-1 rounded-lg" style={{ background: a.on ? "#55BB33" : "rgba(85,187,51,0.25)", color: a.on ? "white" : "#7edd55" }}>{a.status}</div>
-                  </div>
-                ))}
-              </div>
-              <div className="rounded-2xl p-3.5 flex flex-col justify-between" style={{ background: "#192514" }}>
-                <div className="text-[10px] font-semibold uppercase tracking-widest" style={{ color: "rgba(255,255,255,0.5)" }}>{t('dash_crop_title')}</div>
-                <div className="text-sm font-semibold text-white mt-1.5">🌿 {t('dash_crop_name')}</div>
-                <div className="text-xs mt-0.5" style={{ color: "rgba(255,255,255,0.55)" }}>{t('dash_crop_status')}</div>
-                <div className="mt-2.5 text-[11px] leading-relaxed" style={{ color: "rgba(255,255,255,0.5)" }}>{t('dash_crop_ai')}</div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </Reveal>
+      <div className='max-w-6xl font-newblack' style={{ marginTop: 24, borderRadius: 16, overflow: "hidden", border: "1px solid rgba(25,37,20,0.08)", boxShadow: "0 10px 30px rgba(0,0,0,0.05)" }}>
+          <img src="dashboard.png" alt="dashboard" style={{ width: "100%", display: "block" }} />
+      </div>
 
       <div className="text-center mt-10">
         <Link to="/signup" className="inline-flex items-center gap-2 px-8 py-3.5 rounded-full font-semibold text-sm text-[#F5F7F2] no-underline transition-all duration-200 hover:-translate-y-0.5" style={{ background: "var(--green-dark)" }}>
@@ -886,7 +802,7 @@ function Contact() {
   };
 
   const contactInfo = [
-    { icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#55BB33" strokeWidth="2" strokeLinecap="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" /><polyline points="22,6 12,13 2,6" /></svg>, label: t('contact_i1_label'), value: "contact@sahlafarm.com" },
+    { icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#55BB33" strokeWidth="2" strokeLinecap="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" /><polyline points="22,6 12,13 2,6" /></svg>, label: t('contact_i1_label'), value: "sahlafarmproject@gmail.com" },
     { icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#55BB33" strokeWidth="2" strokeLinecap="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z" /><circle cx="12" cy="10" r="3" /></svg>, label: t('contact_i2_label'), value: t('contact_i2_value') },
     { icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#55BB33" strokeWidth="2" strokeLinecap="round"><circle cx="12" cy="12" r="10" /><polyline points="12 6 12 12 16 14" /></svg>, label: t('contact_i3_label'), value: t('contact_i3_value') },
   ];
@@ -959,8 +875,22 @@ function Contact() {
 }
 
 // ── Footer ────────────────────────────────────────────────────────────────
-function Footer() {
+export function Footer() {
   const { t } = useTranslation();
+  const navigate = useNavigate();
+
+  const handleAnchorClick = (e, href) => {
+    e.preventDefault();
+    const sectionId = href.replace("/#", "");
+    if (window.location.pathname === "/") {
+      document.getElementById(sectionId)?.scrollIntoView({ behavior: "smooth" });
+    } else {
+      navigate("/");
+      setTimeout(() => {
+        document.getElementById(sectionId)?.scrollIntoView({ behavior: "smooth" });
+      }, 300);
+    }
+  };
 
   const linkStyle = { color: "rgba(245,247,242,0.6)", textDecoration: "none", fontSize: 14, transition: "color 0.2s" };
   const hoverIn  = (e) => (e.target.style.color = "white");
@@ -970,18 +900,18 @@ function Footer() {
     {
       title: t('footer_col1'),
       links: [
-        { label: t('nav_features'),      href: "#features",   type: "anchor" },
-        { label: t('nav_dashboard'),     href: "#dashboard",  type: "anchor" },
-        { label: t('nav_how'),           href: "#how",        type: "anchor" },
+        { label: t('nav_features'),      href: "/#features",  type: "anchor" },
+        { label: t('nav_dashboard'),     href: "/#dashboard", type: "anchor" },
+        { label: t('nav_how'),           href: "/#how",       type: "anchor" },
         { label: t('footer_mobile_app'), href: "/mobile-app", type: "router" },
       ],
     },
     {
       title: t('footer_col2'),
       links: [
-        { label: t('nav_about'),   href: "#about",   type: "anchor" },
-        { label: t('nav_contact'), href: "#contact", type: "anchor" },
-        { label: t('footer_blog'), href: "/blog",    type: "router" },
+        { label: t('nav_about'),   href: "/#about",   type: "anchor" },
+        { label: t('nav_contact'), href: "/#contact", type: "anchor" },
+        { label: t('footer_blog'), href: "/blog",     type: "router" },
       ],
     },
     {
@@ -1027,6 +957,7 @@ function Footer() {
                       style={linkStyle}
                       onMouseOver={hoverIn}
                       onMouseOut={hoverOut}
+                      onClick={(e) => handleAnchorClick(e, l.href)}
                     >
                       {l.label}
                     </a>
